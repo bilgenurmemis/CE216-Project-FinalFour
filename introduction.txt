@@ -1,0 +1,22 @@
+ Introduction
+Sports management games allow players to take the role of a team manager instead of
+directly controlling athletes during matches. In these games, the player makes decisions
+such as choosing the team lineup, managing players, and setting strategies that may affect
+the outcome of the matches. Because of this, the main challenge is not playing the sport
+itself but managing the team successfully throughout the season.
+The goal of this project is to develop a Sports Manager application with a graphical
+user interface (GUI). The application will simulate a league environment where teams,
+players, and matches are organized within the system. The user will be able to view
+teams and players, follow the league standings, and observe match results as the season
+progresses. Additionally, the application will use AI-generated data such as player and
+coach names, team names, and logos to make the game environment more realistic and
+visually engaging.
+Another objective of the project is to design the system so that it can support different
+sports. Even though the first implementation focuses on football, the overall architecture
+is planned to allow other sports to be added later. Since different sports may have
+different rules, scoring systems, and player attributes, the program needs to be flexible
+enough to support these differences.
+To support this flexibility, the project separates the user interface from the sport
+specific logic. The interface interacts with the game through abstract structures and
+Java interfaces instead of depending on a specific sport implementation. This design
+allows new sports to be added without changing the user interface.
