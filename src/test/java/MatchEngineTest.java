@@ -1,0 +1,59 @@
+import core.ISport;
+import core.MatchEngine;
+import models.BasePlayer;
+import models.BaseTeam;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MatchEngineTest {
+
+    private MatchEngine engine;
+    private ISport dummySport;
+
+    @BeforeEach
+    void setUp() {
+        engine = new MatchEngine();
+        dummySport = new ISport() {
+            @Override
+            public int getRequiredPlayers() { return 2; }
+            @Override
+            public int getMatchDuration() { return 90; }
+            @Override
+            public int getPointForWin() { return 3; }
+        };
+    }
+
+    @Test
+    void testSimulateMatchWithEnoughPlayers() {
+        BaseTeam teamA = new BaseTeam("HomeTeam");
+        BaseTeam teamB = new BaseTeam("AwayTeam");
+
+        for(int i = 0; i < 3; i++) {
+            teamA.addPlayer(new BasePlayer("PlayerA" + i, 20, 85.0) {
+                public void train() {}
+                public void recover() {}
+            });
+            teamB.addPlayer(new BasePlayer("PlayerB" + i, 20, 85.0) {
+                public void train() {}
+                public void recover() {}
+            });
+        }
+
+        int[] result = assertDoesNotThrow(() -> engine.simulateMatch(teamA, teamB, dummySport));
+        assertNotNull(result);
+        assertEquals(2, result.length);
+    }
+
+    @Test
+    void testSimulateMatchThrowsExceptionWhenNotEnoughPlayers() {
+        BaseTeam teamA = new BaseTeam("EmptyTeamA");
+        BaseTeam teamB = new BaseTeam("EmptyTeamB");
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            engine.simulateMatch(teamA, teamB, dummySport);
+        });
+
+        assertTrue(exception.getMessage().contains("Not enough players"));
+    }
+}
