@@ -21,6 +21,8 @@ class MatchEngineTest {
             public int getMatchDuration() { return 90; }
             @Override
             public int getPointForWin() { return 3; }
+            @Override
+            public int getPointForDraw() { return 1; }
         };
     }
 
