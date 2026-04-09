@@ -17,9 +17,9 @@ public class League {
     }
 
     /**
-     * Lige yeni bir takım ekler.
-     * Puanlar takımın kendi nesnesinde (BaseTeam) tutulduğu için burada sadece listeye eklenir.
-     * @param team Eklenecek takım
+     * Adds a new team to the league.
+     * 
+     * @param team The team to be added
      */
     public void addTeam(BaseTeam team) {
         if (!teams.contains(team)) {
@@ -28,8 +28,8 @@ public class League {
     }
 
     /**
-     * Ligdeki takımlar arasında çift maç usulü (rövanşlı) fikstür oluşturur.
-     * Her takım diğer takımlarla biri içeride, biri dışarıda olmak üzere tam iki kez eşleşir.
+     * Generates a double round-robin fixture for all teams in the league.
+     * Each team plays every other team exactly twice, once home and once away.
      */
     public void generateFixtures() {
         fixtures.clear();
@@ -38,10 +38,7 @@ public class League {
                 BaseTeam teamA = teams.get(i);
                 BaseTeam teamB = teams.get(j);
                 
-                // İlk Ayak: Team A ev sahibi (Home)
                 Match firstLeg = new Match(teamA, teamB, sport, 1, "First Leg");
-                
-                // İkinci Ayak (Rövanş): Team B ev sahibi (Home)
                 Match secondLeg = new Match(teamB, teamA, sport, 2, "Second Leg");
                 
                 fixtures.add(firstLeg);
@@ -51,13 +48,14 @@ public class League {
     }
 
     /**
-     * Oynanmış bir maçı alarak takımların kendi içindeki (BaseTeam.addPoints) puan sistemini günceller.
-     * Görevlendirilen sporun (ISport) kurallarına göre puanları dinamik olarak atar.
-     * @param match Oynanan ve skoru belli olan maç
+     * Updates the league standings based on the outcome of a played match.
+     * Points are dynamically distributed according to the assigned ISport rules.
+     * 
+     * @param match The match that was played
      */
     public void updateStandings(Match match) {
         if (!match.isPlayed()) {
-            return; // Maç henüz oynanmadıysa işlem yapmayız
+            return;
         }
 
         BaseTeam homeTeam = match.getHomeTeam();
@@ -66,36 +64,27 @@ public class League {
         int homeScore = match.getHomeScore();
         int awayScore = match.getAwayScore();
 
-        // ISport interface'inden dinamik olarak puan kurallarını çekiyoruz
         int winPoint = (sport != null) ? sport.getPointForWin() : 3;
         int drawPoint = (sport != null) ? sport.getPointForDraw() : 1;
 
         if (homeScore > awayScore) {
-            // Ev sahibi kazandı
             homeTeam.addPoints(winPoint);
         } else if (awayScore > homeScore) {
-            // Deplasman kazandı
             awayTeam.addPoints(winPoint);
         } else {
-            // Beraberlik
             homeTeam.addPoints(drawPoint);
             awayTeam.addPoints(drawPoint);
         }
     }
 
-    // --- Getters & Setters ---
-
     /**
-     * Takımları puanlarına göre (büyükten küçüğe) sıralayarak ligin güncel puan durumunu döndürür.
-     * @return Puana göre azalan sırada sıralanmış takımlar listesi
+     * Retrieves the current league standings sorted by total points in descending order.
+     * 
+     * @return List of teams sorted by points
      */
     public List<BaseTeam> getStandings() {
-        // Orijinal listeyi bozmamak için kopyası üzerinden sıralama yapıyoruz
         List<BaseTeam> sortedTeams = new ArrayList<>(teams);
-        
-        // Lambda kullanarak puan karşılaştırması yapıyoruz (t2 -> t1 yaparak büyükten küçüğe sıralıyoruz)
         sortedTeams.sort((t1, t2) -> Integer.compare(t2.getPoints(), t1.getPoints()));
-        
         return sortedTeams;
     }
 

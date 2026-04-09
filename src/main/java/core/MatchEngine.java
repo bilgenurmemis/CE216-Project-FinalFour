@@ -15,7 +15,13 @@ public class MatchEngine {
     }
 
     /**
-     * Orijinal Method: Arkadaşınızın yazdığı eski sistemle geriye dönük uyumlu çalışır.
+     * Simulates a match between two generic teams based on provided sports rules.
+     * Preserves backwards compatibility for generic simulation calls.
+     * 
+     * @param team1 Home team
+     * @param team2 Away team
+     * @param rules Sports rules interface
+     * @return Array containing [homeScore, awayScore]
      */
     public int[] simulateMatch(BaseTeam team1, BaseTeam team2, ISport rules) {
         if (team1.getPlayers().size() < rules.getRequiredPlayers() ||
@@ -39,13 +45,14 @@ public class MatchEngine {
     }
 
     /**
-     * Yeni Overload (Aşırı Yüklenmiş) Method: Bizim League/Match akışımız için kullanılır.
+     * Simulates a match strictly based on a provided Match object instance.
+     * Updates the internal scores and status logically.
+     *
+     * @param match Match object representing the fixture to be simulated
      */
     public void simulateMatch(Match match) {
-        // Arkadaşınızın yazdığı ana fonksiyonu (yukarıdaki) çağırarak skoru alıyoruz
         int[] scores = simulateMatch(match.getHomeTeam(), match.getAwayTeam(), match.getSport());
         
-        // Kendi kurduğumuz Match nesnesine skoru işliyor ve maçı oynandı yapıyoruz
         match.updateScore(scores[0], scores[1]);
         match.markAsPlayed();
     }

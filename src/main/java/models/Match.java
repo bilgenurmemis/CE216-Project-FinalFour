@@ -9,12 +9,10 @@ public class Match {
     private int awayScore;
     private boolean isPlayed;
 
-    // Yardımcı alanlar (Optional fields)
     private int matchWeek;
     private String round;
     private ISport sport;
 
-    // --- Constructor ---
     public Match(BaseTeam homeTeam, BaseTeam awayTeam) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
@@ -34,7 +32,6 @@ public class Match {
         this.isPlayed = false;
     }
 
-    // --- Getters & Setters ---
     public BaseTeam getHomeTeam() {
         return homeTeam;
     }
@@ -99,12 +96,11 @@ public class Match {
         this.sport = sport;
     }
 
-    // --- İş Geliştirme (Business Logic) Metotları ---
-
     /**
-     * Maç skorunu günceller.
-     * @param homeTeamScore Ev sahibi takımın skoru
-     * @param awayTeamScore Deplasman takımının skoru
+     * Updates the score of the match.
+     * 
+     * @param homeTeamScore The score of the home team
+     * @param awayTeamScore The score of the away team
      */
     public void updateScore(int homeTeamScore, int awayTeamScore) {
         this.homeScore = homeTeamScore;
@@ -112,10 +108,9 @@ public class Match {
     }
 
     /**
-     * Maçı oynanmış (played) olarak işaretler.
+     * Marks the match as completed.
      */
     public void markAsPlayed() {
         this.isPlayed = true;
     }
 }
-

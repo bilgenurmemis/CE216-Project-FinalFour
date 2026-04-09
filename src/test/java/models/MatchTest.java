@@ -7,19 +7,19 @@ class MatchTest {
 
     @Test
     void testMatchBaseInitialization() {
-        // Arrange: Sadece iki takımla temel bir maç oluşturduğumuzu varsayıyoruz
+        // Arrange
         BaseTeam homeTeam = new BaseTeam("Fenerbahce");
         BaseTeam awayTeam = new BaseTeam("Galatasaray");
 
         // Act
         Match match = new Match(homeTeam, awayTeam);
 
-        // Assert: Başlangıç durumlarının doğru atanıp atanmadığını doğruluyoruz
-        assertEquals(homeTeam, match.getHomeTeam(), "Ev sahibi takım doğru atanmalı.");
-        assertEquals(awayTeam, match.getAwayTeam(), "Deplasman takımı doğru atanmalı.");
-        assertEquals(0, match.getHomeScore(), "Başlangıçta ev sahibi skoru 0 olmalı.");
-        assertEquals(0, match.getAwayScore(), "Başlangıçta deplasman skoru 0 olmalı.");
-        assertFalse(match.isPlayed(), "Yeni oluşturulmuş bir maçın statüsü oynanmamış (false) olmalı.");
+        // Assert
+        assertEquals(homeTeam, match.getHomeTeam(), "Home team should be correctly assigned.");
+        assertEquals(awayTeam, match.getAwayTeam(), "Away team should be correctly assigned.");
+        assertEquals(0, match.getHomeScore(), "Initial home score should be 0.");
+        assertEquals(0, match.getAwayScore(), "Initial away score should be 0.");
+        assertFalse(match.isPlayed(), "Initial played status should be false.");
     }
 
     @Test
@@ -27,15 +27,15 @@ class MatchTest {
         // Arrange
         BaseTeam homeTeam = new BaseTeam("Besiktas");
         BaseTeam awayTeam = new BaseTeam("Trabzonspor");
-        core.ISport mockSport = new core.FootballSport(); // ISport implementasyonlarından biri
+        core.ISport mockSport = new core.FootballSport(); // ISport implementation
         
-        // Act: Tüm yardımcı alanların doldurulduğu geniş (kapsamlı) constructor çağrısı
+        // Act
         Match match = new Match(homeTeam, awayTeam, mockSport, 3, "QuarterFinal");
 
-        // Assert: Ekstra alanlarımızın doğru yerleştiğinden emin oluyoruz
-        assertEquals(mockSport, match.getSport(), "Spor arabirimi (ISport) doğru atanmalı.");
-        assertEquals(3, match.getMatchWeek(), "Maç haftası (week) doğru kaydedilmeli.");
-        assertEquals("QuarterFinal", match.getRound(), "Maç turu (round) doğru kaydedilmeli.");
+        // Assert
+        assertEquals(mockSport, match.getSport(), "Sport interface should be correctly assigned.");
+        assertEquals(3, match.getMatchWeek(), "Match week should be correctly assigned.");
+        assertEquals("QuarterFinal", match.getRound(), "Match round should be correctly assigned.");
     }
 
     @Test
@@ -49,7 +49,7 @@ class MatchTest {
         match.updateScore(85, 74);
 
         // Assert
-        assertEquals(85, match.getHomeScore(), "Ev sahibi skoru 85 olarak güncellenmelidir.");
-        assertEquals(74, match.getAwayScore(), "Deplasman skoru 74 olarak güncellenmelidir.");
+        assertEquals(85, match.getHomeScore(), "Home score should be updated to 85.");
+        assertEquals(74, match.getAwayScore(), "Away score should be updated to 74.");
     }
 }

@@ -16,7 +16,7 @@ class LeagueTest {
 
     @BeforeEach
     void setUp() {
-        // Her testten önce ortamı hazırlıyoruz
+        // Prepare the test environment
         mockSport = new ISport() {
             public int getRequiredPlayers() { return 11; }
             public int getMatchDuration() { return 90; }
@@ -38,12 +38,11 @@ class LeagueTest {
         league.addTeam(t3);
         league.addTeam(t4);
         
-        // Fikstürü çekiyoruz
         league.generateFixtures();
         
-        // Çift devreli (rövanşlı) lig usulü için; Takım Sayısı = N ise toplam maç formülü: N * (N-1)
-        // Beklenen sonuç 4 * 3 = 12
-        assertEquals(12, league.getFixtures().size(), "Fikstürde tam olarak matematiksel N*(N-1) adet eşleşme üretilmelidir.");
+        // For a generic double round-robin format with N teams, total matches should be N * (N - 1)
+        // Expected outcome for 4 teams: 4 * 3 = 12
+        assertEquals(12, league.getFixtures().size(), "Total match count should equal N*(N-1).");
     }
 
     @Test
@@ -54,7 +53,7 @@ class LeagueTest {
         league.generateFixtures();
         
         for (Match match : league.getFixtures()) {
-            assertNotEquals(match.getHomeTeam(), match.getAwayTeam(), "Üretilen maç motorunda kesinlikle hiçbir takımın kendisiyle oynadığı (Home=Away) bir maç çıkmamalıdır.");
+            assertNotEquals(match.getHomeTeam(), match.getAwayTeam(), "A team cannot play against itself.");
         }
     }
 
@@ -64,32 +63,29 @@ class LeagueTest {
         league.addTeam(t2);
         
         Match match = new Match(t1, t2, mockSport, 1, "Round 1");
-        match.updateScore(3, 1); // Ev sahibi olan t1 maçı 3-1 yendi
+        match.updateScore(3, 1); 
         match.markAsPlayed();
         
-        // Puan tablosunu işliyoruz
         league.updateStandings(match);
         
-        assertEquals(3, t1.getPoints(), "Ev sahibi takım maçı kazandığında, ISport arabirimindeki 3 puanı (veya galibiyet puanını) tam olarak almalıdır.");
-        assertEquals(0, t2.getPoints(), "Deplasmandaki takım kaybettiğinde puan hanesine hiçbir ekleme (+0) yapılmamalıdır.");
+        assertEquals(3, t1.getPoints(), "Winning home team should receive 3 points.");
+        assertEquals(0, t2.getPoints(), "Losing away team should receive 0 points.");
     }
 
     @Test
     void testStandingsSortingOrder() {
-        league.addTeam(t1); // Hedef: 0 puanda kalacak
-        league.addTeam(t2); // Hedef: 6 puana fırlayacak
-        league.addTeam(t3); // Hedef: 3 puan alacak
+        league.addTeam(t1); // 0 points
+        league.addTeam(t2); // 6 points
+        league.addTeam(t3); // 3 points
         
-        // Maç kazanmışlar gibi basitçe simüle edelim:
         t2.addPoints(6); 
         t3.addPoints(3);
         
-        // Puan tablosunu lig'den çekiyoruz
         List<BaseTeam> table = league.getStandings();
         
-        assertEquals(t2, table.get(0), "En yüksek puana sahip olan takımın her zaman listenin zirvesinde (0. Index) listelendiğinden emin oluyoruz.");
-        assertEquals(t3, table.get(1), "3 Puanlı takımın ortada listelendiğinden emin oluyoruz.");
-        assertEquals(t1, table.get(2), "En az (veya 0) puana sahip olan takımın listenin en dibine yerleştiğini doğruluyoruz.");
+        assertEquals(t2, table.get(0), "Team with the highest points should be at index 0.");
+        assertEquals(t3, table.get(1), "Team with the second highest points should be at index 1.");
+        assertEquals(t1, table.get(2), "Team with the lowest points should be at the bottom.");
     }
 
     @Test
@@ -98,14 +94,13 @@ class LeagueTest {
         league.addTeam(t2);
         
         Match match = new Match(t1, t2, mockSport, 1, "R1");
-        match.updateScore(2, 2); // Maç berabere bitiyor
+        match.updateScore(2, 2); 
         match.markAsPlayed();
         
         league.updateStandings(match);
         
-        // Beraberlik için sistemin her iki tarafa da puan dağıtabildiğini kanıtlıyoruz
-        assertEquals(1, t1.getPoints(), "Berabere kalındığında ev sahibine ISport spesifikasyonunda belirtilen beraberlik puanı (1) verilmelidir.");
-        assertEquals(1, t2.getPoints(), "Berabere kalındığında deplasman takımına da puan (1) eklenilmelidir.");
+        assertEquals(1, t1.getPoints(), "Home team should receive 1 point for a draw.");
+        assertEquals(1, t2.getPoints(), "Away team should receive 1 point for a draw.");
     }
 
     @Test
@@ -122,7 +117,7 @@ class LeagueTest {
                 Match m2 = fixtures.get(j);
                 
                 boolean isDuplicate = m1.getHomeTeam().equals(m2.getHomeTeam()) && m1.getAwayTeam().equals(m2.getAwayTeam());
-                assertFalse(isDuplicate, "Oluşturulan fikstürde aynı takım eşleşmesi (aynı ev sahibi ve aynı misafir kurgusuyla) ASLA bir daha tekrar etmemelidir (Duplicate Koruması).");
+                assertFalse(isDuplicate, "Fixture list should not contain identical matchups.");
             }
         }
     }
