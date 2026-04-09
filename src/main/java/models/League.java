@@ -3,31 +3,27 @@ package models;
 import core.ISport;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class League {
     private List<BaseTeam> teams;
     private List<Match> fixtures;
-    private Map<BaseTeam, Integer> standings;
     private ISport sport;
 
     public League(ISport sport) {
         this.sport = sport;
         this.teams = new ArrayList<>();
         this.fixtures = new ArrayList<>();
-        this.standings = new HashMap<>(); // Puan durumunu Takım -> Puan şeklinde tutuyoruz
     }
 
     /**
-     * Lige yeni bir takım ekler ve puanlama tablosunda (standings) 0 puanla başlatır.
+     * Lige yeni bir takım ekler.
+     * Puanlar takımın kendi nesnesinde (BaseTeam) tutulduğu için burada sadece listeye eklenir.
      * @param team Eklenecek takım
      */
     public void addTeam(BaseTeam team) {
         if (!teams.contains(team)) {
             teams.add(team);
-            standings.put(team, 0); 
         }
     }
 
@@ -55,7 +51,7 @@ public class League {
     }
 
     /**
-     * Oynanmış bir maçı alarak puan tablosunu (standings) günceller.
+     * Oynanmış bir maçı alarak takımların kendi içindeki (BaseTeam.addPoints) puan sistemini günceller.
      * Görevlendirilen sporun (ISport) kurallarına göre puanları dinamik olarak atar.
      * @param match Oynanan ve skoru belli olan maç
      */
@@ -71,20 +67,19 @@ public class League {
         int awayScore = match.getAwayScore();
 
         // ISport interface'inden dinamik olarak puan kurallarını çekiyoruz
-        // sport referansı null olma ihtimaline karşı varsayılan 3-1 koruması ekliyorum
         int winPoint = (sport != null) ? sport.getPointForWin() : 3;
         int drawPoint = (sport != null) ? sport.getPointForDraw() : 1;
 
         if (homeScore > awayScore) {
             // Ev sahibi kazandı
-            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + winPoint);
+            homeTeam.addPoints(winPoint);
         } else if (awayScore > homeScore) {
             // Deplasman kazandı
-            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + winPoint);
+            awayTeam.addPoints(winPoint);
         } else {
             // Beraberlik
-            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + drawPoint);
-            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + drawPoint);
+            homeTeam.addPoints(drawPoint);
+            awayTeam.addPoints(drawPoint);
         }
     }
 
@@ -96,10 +91,6 @@ public class League {
 
     public List<Match> getFixtures() {
         return fixtures;
-    }
-
-    public Map<BaseTeam, Integer> getStandings() {
-        return standings;
     }
 
     public ISport getSport() {
