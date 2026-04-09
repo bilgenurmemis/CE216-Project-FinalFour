@@ -32,17 +32,24 @@ public class League {
     }
 
     /**
-     * Ligdeki takımlar arasında basit bir rövanşsız (tek maçlık) fikstür oluşturur.
+     * Ligdeki takımlar arasında çift maç usulü (rövanşlı) fikstür oluşturur.
+     * Her takım diğer takımlarla biri içeride, biri dışarıda olmak üzere tam iki kez eşleşir.
      */
     public void generateFixtures() {
         fixtures.clear();
         for (int i = 0; i < teams.size(); i++) {
             for (int j = i + 1; j < teams.size(); j++) {
-                BaseTeam homeTeam = teams.get(i);
-                BaseTeam awayTeam = teams.get(j);
+                BaseTeam teamA = teams.get(i);
+                BaseTeam teamB = teams.get(j);
                 
-                Match match = new Match(homeTeam, awayTeam, sport, 1, "Normal Season");
-                fixtures.add(match);
+                // İlk Ayak: Team A ev sahibi (Home)
+                Match firstLeg = new Match(teamA, teamB, sport, 1, "First Leg");
+                
+                // İkinci Ayak (Rövanş): Team B ev sahibi (Home)
+                Match secondLeg = new Match(teamB, teamA, sport, 2, "Second Leg");
+                
+                fixtures.add(firstLeg);
+                fixtures.add(secondLeg);
             }
         }
     }
