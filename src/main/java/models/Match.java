@@ -98,4 +98,24 @@ public class Match {
     public void setSport(ISport sport) {
         this.sport = sport;
     }
+
+    // --- İş Geliştirme (Business Logic) Metotları ---
+
+    /**
+     * Maç skorunu günceller.
+     * @param homeTeamScore Ev sahibi takımın skoru
+     * @param awayTeamScore Deplasman takımının skoru
+     */
+    public void updateScore(int homeTeamScore, int awayTeamScore) {
+        this.homeScore = homeTeamScore;
+        this.awayScore = awayTeamScore;
+    }
+
+    /**
+     * Maçı oynanmış (played) olarak işaretler.
+     */
+    public void markAsPlayed() {
+        this.isPlayed = true;
+    }
 }
+
