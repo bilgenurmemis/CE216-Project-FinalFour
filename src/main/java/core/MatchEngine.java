@@ -2,6 +2,7 @@ package core;
 
 import models.BaseTeam;
 import models.BasePlayer;
+import models.Match;
 import java.util.Random;
 import java.util.List;
 
@@ -13,7 +14,11 @@ public class MatchEngine {
         this.random = new Random();
     }
 
-    public int[] simulateMatch(BaseTeam team1, BaseTeam team2, ISport rules) {
+    public void simulateMatch(Match match) {
+        BaseTeam team1 = match.getHomeTeam();
+        BaseTeam team2 = match.getAwayTeam();
+        ISport rules = match.getSport();
+
         if (team1.getPlayers().size() < rules.getRequiredPlayers() ||
                 team2.getPlayers().size() < rules.getRequiredPlayers()) {
             throw new IllegalArgumentException("Not enough players to start the match.");
@@ -29,10 +34,11 @@ public class MatchEngine {
         applyRandomInjuries(team1);
         applyRandomInjuries(team2);
 
-        // TODO: Store results in a Match object instead of printing to console
-        System.out.println("Match Result: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
+        // Sonuçları Match objesine işliyoruz ve maçı oynandı (isPlayed = true) yapıyoruz
+        match.updateScore(t1Score, t2Score);
+        match.markAsPlayed();
 
-        return new int[]{t1Score, t2Score};
+        System.out.println("Match Played: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
     }
 
     private double calculateTeamPower(BaseTeam team) {
