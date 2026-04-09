@@ -56,7 +56,7 @@ public class League {
 
     /**
      * Oynanmış bir maçı alarak puan tablosunu (standings) günceller.
-     * Standart 3 puanlı sistemi kullanır (Galibiyet 3, Beraberlik 1).
+     * Görevlendirilen sporun (ISport) kurallarına göre puanları dinamik olarak atar.
      * @param match Oynanan ve skoru belli olan maç
      */
     public void updateStandings(Match match) {
@@ -70,16 +70,21 @@ public class League {
         int homeScore = match.getHomeScore();
         int awayScore = match.getAwayScore();
 
+        // ISport interface'inden dinamik olarak puan kurallarını çekiyoruz
+        // sport referansı null olma ihtimaline karşı varsayılan 3-1 koruması ekliyorum
+        int winPoint = (sport != null) ? sport.getPointForWin() : 3;
+        int drawPoint = (sport != null) ? sport.getPointForDraw() : 1;
+
         if (homeScore > awayScore) {
             // Ev sahibi kazandı
-            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + 3);
+            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + winPoint);
         } else if (awayScore > homeScore) {
             // Deplasman kazandı
-            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + 3);
+            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + winPoint);
         } else {
             // Beraberlik
-            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + 1);
-            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + 1);
+            standings.put(homeTeam, standings.getOrDefault(homeTeam, 0) + drawPoint);
+            standings.put(awayTeam, standings.getOrDefault(awayTeam, 0) + drawPoint);
         }
     }
 
