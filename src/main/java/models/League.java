@@ -85,6 +85,20 @@ public class League {
 
     // --- Getters & Setters ---
 
+    /**
+     * Takımları puanlarına göre (büyükten küçüğe) sıralayarak ligin güncel puan durumunu döndürür.
+     * @return Puana göre azalan sırada sıralanmış takımlar listesi
+     */
+    public List<BaseTeam> getStandings() {
+        // Orijinal listeyi bozmamak için kopyası üzerinden sıralama yapıyoruz
+        List<BaseTeam> sortedTeams = new ArrayList<>(teams);
+        
+        // Lambda kullanarak puan karşılaştırması yapıyoruz (t2 -> t1 yaparak büyükten küçüğe sıralıyoruz)
+        sortedTeams.sort((t1, t2) -> Integer.compare(t2.getPoints(), t1.getPoints()));
+        
+        return sortedTeams;
+    }
+
     public List<BaseTeam> getTeams() {
         return teams;
     }
