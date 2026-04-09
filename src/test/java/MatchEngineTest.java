@@ -16,13 +16,24 @@ class MatchEngineTest {
         engine = new MatchEngine();
         dummySport = new ISport() {
             @Override
-            public int getRequiredPlayers() { return 2; }
+            public int getRequiredPlayers() {
+                return 2;
+            }
+
             @Override
-            public int getMatchDuration() { return 90; }
+            public int getMatchDuration() {
+                return 90;
+            }
+
             @Override
-            public int getPointForWin() { return 3; }
+            public int getPointForWin() {
+                return 3;
+            }
+
             @Override
-            public int getPointForDraw() { return 1; }
+            public int getPointForDraw() {
+                return 1;
+            }
         };
     }
 
@@ -31,14 +42,28 @@ class MatchEngineTest {
         BaseTeam teamA = new BaseTeam("HomeTeam");
         BaseTeam teamB = new BaseTeam("AwayTeam");
 
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             teamA.addPlayer(new BasePlayer("PlayerA" + i, 20, 85.0) {
-                public void train() {}
-                public void recover() {}
+                public void train() {
+                }
+
+                public void recover() {
+                }
+
+                public int getSkillLevel() {
+                    return 70;
+                }
             });
             teamB.addPlayer(new BasePlayer("PlayerB" + i, 20, 85.0) {
-                public void train() {}
-                public void recover() {}
+                public void train() {
+                }
+
+                public void recover() {
+                }
+
+                public int getSkillLevel() {
+                    return 70;
+                }
             });
         }
 

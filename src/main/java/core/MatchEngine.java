@@ -14,11 +14,10 @@ public class MatchEngine {
         this.random = new Random();
     }
 
-    public void simulateMatch(Match match) {
-        BaseTeam team1 = match.getHomeTeam();
-        BaseTeam team2 = match.getAwayTeam();
-        ISport rules = match.getSport();
-
+    /**
+     * Orijinal Method: Arkadaşınızın yazdığı eski sistemle geriye dönük uyumlu çalışır.
+     */
+    public int[] simulateMatch(BaseTeam team1, BaseTeam team2, ISport rules) {
         if (team1.getPlayers().size() < rules.getRequiredPlayers() ||
                 team2.getPlayers().size() < rules.getRequiredPlayers()) {
             throw new IllegalArgumentException("Not enough players to start the match.");
@@ -34,11 +33,21 @@ public class MatchEngine {
         applyRandomInjuries(team1);
         applyRandomInjuries(team2);
 
-        // Sonuçları Match objesine işliyoruz ve maçı oynandı (isPlayed = true) yapıyoruz
-        match.updateScore(t1Score, t2Score);
-        match.markAsPlayed();
+        System.out.println("Match Result: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
 
-        System.out.println("Match Played: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
+        return new int[]{t1Score, t2Score};
+    }
+
+    /**
+     * Yeni Overload (Aşırı Yüklenmiş) Method: Bizim League/Match akışımız için kullanılır.
+     */
+    public void simulateMatch(Match match) {
+        // Arkadaşınızın yazdığı ana fonksiyonu (yukarıdaki) çağırarak skoru alıyoruz
+        int[] scores = simulateMatch(match.getHomeTeam(), match.getAwayTeam(), match.getSport());
+        
+        // Kendi kurduğumuz Match nesnesine skoru işliyor ve maçı oynandı yapıyoruz
+        match.updateScore(scores[0], scores[1]);
+        match.markAsPlayed();
     }
 
     private double calculateTeamPower(BaseTeam team) {
