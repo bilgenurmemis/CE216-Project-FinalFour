@@ -84,7 +84,11 @@ public class League {
      */
     public List<BaseTeam> getStandings() {
         List<BaseTeam> sortedTeams = new ArrayList<>(teams);
-        sortedTeams.sort((t1, t2) -> Integer.compare(t2.getPoints(), t1.getPoints()));
+        sortedTeams.sort((t1, t2) -> {
+            int pointDiff = Integer.compare(t2.getPoints(), t1.getPoints());
+            if (pointDiff != 0) return pointDiff;
+            return t1.getTeamName().compareTo(t2.getTeamName());
+        });
         return sortedTeams;
     }
 
