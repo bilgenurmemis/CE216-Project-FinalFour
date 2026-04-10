@@ -9,15 +9,19 @@ public abstract class BasePlayer {
     public BasePlayer(String name, int age, double fitness) {
         this.name = name;
         this.age = age;
-        this.fitness = fitness;
+        this.fitness = Math.min(100, Math.max(0, fitness));
         this.isInjured = false;
     }
 
     public abstract void train();
     public abstract void recover();
+    public abstract int getSkillLevel();
 
     public double getFitness() { return fitness; }
     public String getName() { return name; }
     public boolean isInjured() { return isInjured; }
     public void setInjured(boolean injured) { isInjured = injured; }
+    public String toString(){
+        return name + " | Fitness: " + fitness + " | Injured: " + isInjured;
+    }
 }

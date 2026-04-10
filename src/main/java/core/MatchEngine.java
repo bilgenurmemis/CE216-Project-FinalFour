@@ -2,6 +2,7 @@ package core;
 
 import models.BaseTeam;
 import models.BasePlayer;
+import models.Match;
 import java.util.Random;
 import java.util.List;
 
@@ -13,6 +14,15 @@ public class MatchEngine {
         this.random = new Random();
     }
 
+    /**
+     * Simulates a match between two generic teams based on provided sports rules.
+     * Preserves backwards compatibility for generic simulation calls.
+     * 
+     * @param team1 Home team
+     * @param team2 Away team
+     * @param rules Sports rules interface
+     * @return Array containing [homeScore, awayScore]
+     */
     public int[] simulateMatch(BaseTeam team1, BaseTeam team2, ISport rules) {
         if (team1.getPlayers().size() < rules.getRequiredPlayers() ||
                 team2.getPlayers().size() < rules.getRequiredPlayers()) {
@@ -29,10 +39,22 @@ public class MatchEngine {
         applyRandomInjuries(team1);
         applyRandomInjuries(team2);
 
-        // TODO: Store results in a Match object instead of printing to console
         System.out.println("Match Result: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
 
         return new int[]{t1Score, t2Score};
+    }
+
+    /**
+     * Simulates a match strictly based on a provided Match object instance.
+     * Updates the internal scores and status logically.
+     *
+     * @param match Match object representing the fixture to be simulated
+     */
+    public void simulateMatch(Match match) {
+        int[] scores = simulateMatch(match.getHomeTeam(), match.getAwayTeam(), match.getSport());
+        
+        match.updateScore(scores[0], scores[1]);
+        match.markAsPlayed();
     }
 
     private double calculateTeamPower(BaseTeam team) {
