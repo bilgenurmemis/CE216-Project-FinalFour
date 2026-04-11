@@ -1,8 +1,7 @@
-package test.Services;
+package Services;
 
 import core.FootballSport;
 import models.BaseTeam;
-import Services.DataManager;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
