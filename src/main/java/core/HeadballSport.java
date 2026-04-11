@@ -6,7 +6,7 @@ package core;
         public int getRequiredPlayers() { return 7; }
 
         @Override
-        public int getMatchDuration() { return 450; }
+        public int getMatchDuration() { return 40; }
 
         @Override
         public int getPointForWin() { return 2; }
