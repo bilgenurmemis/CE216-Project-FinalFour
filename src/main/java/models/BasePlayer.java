@@ -1,6 +1,10 @@
 package models;
 
-public abstract class BasePlayer {
+import java.io.Serializable;
+
+public abstract class BasePlayer implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected String name;
     protected int age;
     protected double fitness;
@@ -21,7 +25,9 @@ public abstract class BasePlayer {
     public String getName() { return name; }
     public boolean isInjured() { return isInjured; }
     public void setInjured(boolean injured) { isInjured = injured; }
-    public String toString(){
+
+    @Override
+    public String toString() {
         return name + " | Fitness: " + fitness + " | Injured: " + isInjured;
     }
 }

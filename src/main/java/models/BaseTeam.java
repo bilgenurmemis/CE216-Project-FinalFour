@@ -1,9 +1,12 @@
 package models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseTeam {
+public class BaseTeam implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String teamName;
     private List<BasePlayer> players;
     private int points;
@@ -19,26 +22,27 @@ public class BaseTeam {
     public List<BasePlayer> getPlayers() { return players; }
     public int getPoints() { return points; }
     public void addPoints(int earnedPoints) { this.points += earnedPoints; }
-    public int getTeamStrength(){
-        if(players.isEmpty()){
-            return 0;
-        }
+
+    public int getTeamStrength() {
+        if (players.isEmpty()) return 0;
         int total = 0;
-        for(BasePlayer p : players){
+        for (BasePlayer p : players) {
             total += p.getSkillLevel();
         }
         return total / players.size();
     }
-    public boolean addPlayer(BasePlayer player, int maxPlayers){
-        if(players.size() >= maxPlayers){
+
+    public boolean addPlayer(BasePlayer player, int maxPlayers) {
+        if (players.size() >= maxPlayers) {
             System.out.println("Team is full!");
             return false;
         }
         players.add(player);
         return true;
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         return teamName + " | Points: " + points + " | Players: " + players.size();
     }
 }
