@@ -1,5 +1,6 @@
 package Services;
 
+import core.BasketballSport;
 import core.ISport;
 import core.FootballSport;
 import core.HeadballSport;
@@ -45,8 +46,8 @@ public class DataManager {
                     BasePlayer player;
                     if (rules instanceof HeadballSport) {
                         player = new HeadballPlayer(pName, age, fitness);
-                    } else if (rules instanceof FootballSport) {
-                        player = new FootballPlayer(pName, age, fitness);
+                    } else if (rules instanceof BasketballSport) {
+                        player = new BasketballPlayer(pName, age, fitness);
                     } else {
                         player = new FootballPlayer(pName, age, fitness);
                     }

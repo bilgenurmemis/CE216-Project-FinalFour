@@ -2,6 +2,7 @@ import Services.DataManager;
 import core.BasketballSport;
 import core.MatchEngine;
 import models.BaseTeam;
+import models.BasketballPlayer;
 import models.FootballPlayer;
 import models.League;
 import javafx.application.Application;
@@ -52,6 +53,19 @@ public class SportsManagerGUI extends Application {
         Button btnLoadGame = new Button("Load Game");
         Button btnSaveGame = new Button("Save Game");
         Button btnExit = new Button("Exit");
+
+        btnSaveGame.setOnAction(e -> {
+            Services.SaveManager.saveGame(league, "savegame.dat");
+            System.out.println("GUI: Game Saved!");
+        });
+
+        btnLoadGame.setOnAction(e -> {
+            models.League loadedLeague = Services.SaveManager.loadGame("savegame.dat");
+            if (loadedLeague != null) {
+                this.league = loadedLeague;
+                System.out.println("GUI: Game Loaded Successfully!");
+            }
+        });
 
         btnNewGame.setMinWidth(200);
         btnLoadGame.setMinWidth(200);
@@ -108,7 +122,7 @@ public class SportsManagerGUI extends Application {
 
                 int required = league.getSport().getRequiredPlayers();
                 for (int i = 0; i < required; i++) {
-                    FootballPlayer dummyPlayer = new FootballPlayer("Player " + i, 22, 85.0);
+                    BasketballPlayer dummyPlayer = new BasketballPlayer("Player " + i, 22, 85.0);
                     myTeamObj.addPlayer(dummyPlayer, 20);
                 }
 
