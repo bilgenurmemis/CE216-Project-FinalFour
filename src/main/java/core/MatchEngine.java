@@ -36,28 +36,28 @@ public class MatchEngine {
         int t2Score = 0;
 
         if (rules instanceof BasketballSport) {
-            System.out.println("--- Basketbol Maçı Başlıyor ---");
-            for (int periyot = 1; periyot <= 4; periyot++) {
-                // 10-20 arası baz puan + takım gücüne göre 0-4 arası ekstra puan
-                int t1PeriyotSkoru = 10 + random.nextInt(11) + (int)((t1Power / 100.0) * random.nextInt(5));
-                int t2PeriyotSkoru = 10 + random.nextInt(11) + (int)((t2Power / 100.0) * random.nextInt(5));
-                
-                t1Score += t1PeriyotSkoru;
-                t2Score += t2PeriyotSkoru;
-                
-                System.out.println(periyot + ". Periyot Sonucu: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
+            System.out.println("--- Basketball Match Starting ---");
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                // Base points between 10-20 + extra points between 0-4 based on team power
+                int t1QuarterScore = 10 + random.nextInt(11) + (int)((t1Power / 100.0) * random.nextInt(5));
+                int t2QuarterScore = 10 + random.nextInt(11) + (int)((t2Power / 100.0) * random.nextInt(5));
+
+                t1Score += t1QuarterScore;
+                t2Score += t2QuarterScore;
+
+                System.out.println("Quarter " + quarter + " Result: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
             }
-            
-            // Basketbolda maç berabere bitmez, uzatmaya gider
-            int uzatma = 1;
+
+
+            int overtime = 1;
             while (t1Score == t2Score) {
-                System.out.println("Maç berabere! " + uzatma + ". Uzatma oynanıyor...");
+                System.out.println("Match is tied! Playing overtime " + overtime + "...");
                 t1Score += 5 + random.nextInt(6);
                 t2Score += 5 + random.nextInt(6);
-                uzatma++;
+                overtime++;
             }
         } else {
-            // Futbol ve diğer sporlar için mevcut genel simülasyon mantığı
+
             double scoreMultiplier = rules.getMatchDuration() / 45.0;
             t1Score = (int) (random.nextInt(5) * (t1Power / 100) * scoreMultiplier);
             t2Score = (int) (random.nextInt(5) * (t2Power / 100) * scoreMultiplier);

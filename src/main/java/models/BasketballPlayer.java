@@ -19,7 +19,7 @@ public class BasketballPlayer extends BasePlayer implements Serializable {
     @Override
     public void train() {
         if (isInjured) {
-            System.out.println(name + " sakat olduğu için antrenman yapamaz!");
+            System.out.println(name + " is injured and cannot train!");
             return;
         }
         fitness = Math.min(100, fitness + 10);
@@ -28,7 +28,7 @@ public class BasketballPlayer extends BasePlayer implements Serializable {
         rebounding += 5;
         if (r.nextInt(100) < 10) {
             isInjured = true;
-            System.out.println(name + " antrenmanda sakatlandı!");
+            System.out.println(name + " got injured during training!");
         }
     }
 
@@ -37,21 +37,18 @@ public class BasketballPlayer extends BasePlayer implements Serializable {
         fitness = Math.min(100, fitness + 15);
         if (isInjured && fitness > 60) {
             isInjured = false;
-            System.out.println(name + " iyileşti!");
+            System.out.println(name + " has recovered!");
         }
     }
 
     @Override
     public int getSkillLevel() {
-        // Şut, ribaund ve kondisyonun ortalaması oyuncunun yeteneğini belirler
         int skill = (int) ((shooting + rebounding + fitness) / 3);
         if (isInjured) {
-            skill = (int) (skill * 0.5); // Sakatsa yeteneği yarı yarıya düşer
+            skill = (int) (skill * 0.5);
         }
         return skill;
     }
-
-    // Getter ve Setter'lar eklenebilir
     public int getShooting() { return shooting; }
     public void setShooting(int shooting) { this.shooting = shooting; }
 
