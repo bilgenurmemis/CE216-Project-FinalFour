@@ -32,9 +32,36 @@ public class MatchEngine {
         double t1Power = calculateTeamPower(team1);
         double t2Power = calculateTeamPower(team2);
 
-        double scoreMultiplier = rules.getMatchDuration() / 45.0;
-        int t1Score = (int) (random.nextInt(5) * (t1Power / 100) * scoreMultiplier);
-        int t2Score = (int) (random.nextInt(5) * (t2Power / 100) * scoreMultiplier);
+        int t1Score = 0;
+        int t2Score = 0;
+
+        if (rules instanceof BasketballSport) {
+            System.out.println("--- Basketball Match Starting ---");
+            for (int quarter = 1; quarter <= 4; quarter++) {
+                // Base points between 10-20 + extra points between 0-4 based on team power
+                int t1QuarterScore = 10 + random.nextInt(11) + (int)((t1Power / 100.0) * random.nextInt(5));
+                int t2QuarterScore = 10 + random.nextInt(11) + (int)((t2Power / 100.0) * random.nextInt(5));
+
+                t1Score += t1QuarterScore;
+                t2Score += t2QuarterScore;
+
+                System.out.println("Quarter " + quarter + " Result: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
+            }
+
+
+            int overtime = 1;
+            while (t1Score == t2Score) {
+                System.out.println("Match is tied! Playing overtime " + overtime + "...");
+                t1Score += 5 + random.nextInt(6);
+                t2Score += 5 + random.nextInt(6);
+                overtime++;
+            }
+        } else {
+
+            double scoreMultiplier = rules.getMatchDuration() / 45.0;
+            t1Score = (int) (random.nextInt(5) * (t1Power / 100) * scoreMultiplier);
+            t2Score = (int) (random.nextInt(5) * (t2Power / 100) * scoreMultiplier);
+        }
 
         applyRandomInjuries(team1);
         applyRandomInjuries(team2);
@@ -58,16 +85,16 @@ public class MatchEngine {
     }
 
     private double calculateTeamPower(BaseTeam team) {
-        double totalFitness = 0;
+        double totalSkill = 0;
         int activePlayers = 0;
 
         for (BasePlayer player : team.getPlayers()) {
             if (!player.isInjured()) {
-                totalFitness += player.getFitness();
+                totalSkill += player.getSkillLevel();
                 activePlayers++;
             }
         }
-        return activePlayers == 0 ? 1.0 : totalFitness / activePlayers;
+        return activePlayers == 0 ? 1.0 : totalSkill / activePlayers;
     }
 
     private void applyRandomInjuries(BaseTeam team) {
