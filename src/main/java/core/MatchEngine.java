@@ -32,9 +32,36 @@ public class MatchEngine {
         double t1Power = calculateTeamPower(team1);
         double t2Power = calculateTeamPower(team2);
 
-        double scoreMultiplier = rules.getMatchDuration() / 45.0;
-        int t1Score = (int) (random.nextInt(5) * (t1Power / 100) * scoreMultiplier);
-        int t2Score = (int) (random.nextInt(5) * (t2Power / 100) * scoreMultiplier);
+        int t1Score = 0;
+        int t2Score = 0;
+
+        if (rules instanceof BasketballSport) {
+            System.out.println("--- Basketbol Maçı Başlıyor ---");
+            for (int periyot = 1; periyot <= 4; periyot++) {
+                // 10-20 arası baz puan + takım gücüne göre 0-4 arası ekstra puan
+                int t1PeriyotSkoru = 10 + random.nextInt(11) + (int)((t1Power / 100.0) * random.nextInt(5));
+                int t2PeriyotSkoru = 10 + random.nextInt(11) + (int)((t2Power / 100.0) * random.nextInt(5));
+                
+                t1Score += t1PeriyotSkoru;
+                t2Score += t2PeriyotSkoru;
+                
+                System.out.println(periyot + ". Periyot Sonucu: " + team1.getTeamName() + " " + t1Score + " - " + t2Score + " " + team2.getTeamName());
+            }
+            
+            // Basketbolda maç berabere bitmez, uzatmaya gider
+            int uzatma = 1;
+            while (t1Score == t2Score) {
+                System.out.println("Maç berabere! " + uzatma + ". Uzatma oynanıyor...");
+                t1Score += 5 + random.nextInt(6);
+                t2Score += 5 + random.nextInt(6);
+                uzatma++;
+            }
+        } else {
+            // Futbol ve diğer sporlar için mevcut genel simülasyon mantığı
+            double scoreMultiplier = rules.getMatchDuration() / 45.0;
+            t1Score = (int) (random.nextInt(5) * (t1Power / 100) * scoreMultiplier);
+            t2Score = (int) (random.nextInt(5) * (t2Power / 100) * scoreMultiplier);
+        }
 
         applyRandomInjuries(team1);
         applyRandomInjuries(team2);
@@ -58,16 +85,16 @@ public class MatchEngine {
     }
 
     private double calculateTeamPower(BaseTeam team) {
-        double totalFitness = 0;
+        double totalSkill = 0;
         int activePlayers = 0;
 
         for (BasePlayer player : team.getPlayers()) {
             if (!player.isInjured()) {
-                totalFitness += player.getFitness();
+                totalSkill += player.getSkillLevel();
                 activePlayers++;
             }
         }
-        return activePlayers == 0 ? 1.0 : totalFitness / activePlayers;
+        return activePlayers == 0 ? 1.0 : totalSkill / activePlayers;
     }
 
     private void applyRandomInjuries(BaseTeam team) {

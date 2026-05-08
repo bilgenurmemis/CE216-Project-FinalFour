@@ -11,6 +11,11 @@ public class BasketballSport implements ISport, Serializable {
     }
 
     @Override
+    public int getSquadSize() {
+        return 12; // 5 as, 7 yedek
+    }
+
+    @Override
     public int getMatchDuration() {
         return 40; // 4 periyot x 10 dakika
     }
