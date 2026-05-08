@@ -45,4 +45,8 @@ public class BaseTeam implements Serializable {
     public String toString() {
         return teamName + " | Points: " + points + " | Players: " + players.size();
     }
+    private String coach;
+
+    public void setCoach(String coach) { this.coach = coach; }
+    public String getCoach() { return this.coach; }
 }
