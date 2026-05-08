@@ -1,10 +1,7 @@
 import Services.DataManager;
 import core.BasketballSport;
 import core.MatchEngine;
-import models.BaseTeam;
-import models.BasketballPlayer;
-import models.FootballPlayer;
-import models.League;
+import models.*;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -173,6 +170,9 @@ public class SportsManagerGUI extends Application {
 
             lblScore.setText(scores[0] + " - " + scores[1]);
 
+            myTeamObj.updateStatus(scores[0], scores[1]);
+            opponentTeamObj.updateStatus(scores[1], scores[0]);
+
             int winPoint = league.getSport().getPointForWin();
             int drawPoint = league.getSport().getPointForDraw();
             if (scores[0] > scores[1]) myTeamObj.addPoints(winPoint);
@@ -197,6 +197,9 @@ public class SportsManagerGUI extends Application {
         Label titleLabel = new Label("League Standings");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
 
+        LeagueTable tableLogic = new LeagueTable(league.getTeams());
+        List<BaseTeam> sortedTeams = tableLogic.getTable();
+
         TableView<BaseTeam> standingsTable = new TableView<>();
 
         TableColumn<BaseTeam, String> teamCol = new TableColumn<>("Team Name");
@@ -207,10 +210,23 @@ public class SportsManagerGUI extends Application {
         pointsCol.setMinWidth(100);
         pointsCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getPoints())));
 
-        standingsTable.getColumns().addAll(teamCol, pointsCol);
+        TableColumn<BaseTeam, String> averageCol = new TableColumn<>("Average");
+        averageCol.setMinWidth(100);
+        averageCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getAverage())));
+
+        standingsTable.getColumns().addAll(teamCol, pointsCol, averageCol);
+
 
         ObservableList<BaseTeam> data = FXCollections.observableArrayList(league.getStandings());
         standingsTable.setItems(data);
+
+        Button btnReset = new Button("Reset Standings");
+        btnReset.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnReset.setMinWidth(80);
+        btnReset.setOnAction(e -> {
+            tableLogic.clearStatus();
+            standingsTable.setItems(FXCollections.observableArrayList(tableLogic.getTable()));
+                });
 
         standingsTable.setMaxHeight(250);
         standingsTable.setMaxWidth(350);
@@ -220,10 +236,12 @@ public class SportsManagerGUI extends Application {
 
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.getChildren().addAll(titleLabel, standingsTable, btnMainMenu);
+        layout.getChildren().addAll(titleLabel, standingsTable, btnMainMenu, btnReset);
 
         Scene standingsScene = new Scene(layout, 500, 500);
         window.setScene(standingsScene);
+
+
     }
 
     public static void main(String[] args) {

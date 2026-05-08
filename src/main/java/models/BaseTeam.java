@@ -10,6 +10,8 @@ public class BaseTeam implements Serializable {
     private String teamName;
     private List<BasePlayer> players;
     private int points;
+    private int scoredPoints = 0;
+    private int concededPoints = 0;
 
     public BaseTeam(String teamName) {
         this.teamName = teamName;
@@ -49,4 +51,16 @@ public class BaseTeam implements Serializable {
 
     public void setCoach(String coach) { this.coach = coach; }
     public String getCoach() { return this.coach; }
+    public int getAverage(){
+        return scoredPoints - concededPoints;
+    }
+    public void updateStatus(int scored, int conceded){
+        this.scoredPoints += scored;
+        this.concededPoints += conceded;
+    }
+    public void resetStatus(){
+        this.points = 0;
+        this.scoredPoints = 0;
+        this.concededPoints = 0;
+    }
 }
