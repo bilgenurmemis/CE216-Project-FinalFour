@@ -29,4 +29,6 @@ public class BasketballSport implements ISport, Serializable {
     public int getPointForDraw() {
         return 1;
     }
+    @Override
+    public int getNumberOfPeriods() { return 4; }
 }

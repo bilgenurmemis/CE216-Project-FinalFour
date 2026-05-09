@@ -38,6 +38,31 @@ public class League implements Serializable {
         }
     }
 
+    public List<List<Match>> getWeeklyFixtures() {
+        List<List<Match>> weeks = new ArrayList<>();
+        int matchesPerWeek = teams.size() / 2;
+
+        List<Match> allMatches = new ArrayList<>(fixtures);
+
+        while (!allMatches.isEmpty()) {
+            List<Match> week = new ArrayList<>();
+            List<BaseTeam> usedTeams = new ArrayList<>();
+
+            for (Match m : new ArrayList<>(allMatches)) {
+                if (!usedTeams.contains(m.getHomeTeam()) &&
+                        !usedTeams.contains(m.getAwayTeam())) {
+                    week.add(m);
+                    usedTeams.add(m.getHomeTeam());
+                    usedTeams.add(m.getAwayTeam());
+                }
+                if (week.size() == matchesPerWeek) break;
+            }
+            allMatches.removeAll(week);
+            weeks.add(week);
+        }
+        return weeks;
+    }
+
     public void updateStandings(Match match) {
         if (!match.isPlayed()) return;
         BaseTeam homeTeam = match.getHomeTeam();
@@ -54,6 +79,8 @@ public class League implements Serializable {
             homeTeam.addPoints(drawPoint);
             awayTeam.addPoints(drawPoint);
         }
+        homeTeam.updateStatus(homeScore, awayScore);
+        awayTeam.updateStatus(awayScore, homeScore);
     }
 
     public List<BaseTeam> getStandings() {
@@ -61,7 +88,7 @@ public class League implements Serializable {
         sortedTeams.sort((t1, t2) -> {
             int pointDiff = Integer.compare(t2.getPoints(), t1.getPoints());
             if (pointDiff != 0) return pointDiff;
-            return t1.getTeamName().compareTo(t2.getTeamName());
+            return Integer.compare(t2.getAverage(), t1.getAverage());
         });
         return sortedTeams;
     }

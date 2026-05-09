@@ -19,4 +19,6 @@ public class HeadballSport implements ISport, Serializable {
 
     @Override
     public int getPointForDraw() { return 1; }
+    @Override
+    public int getNumberOfPeriods() { return 4; }
 }
