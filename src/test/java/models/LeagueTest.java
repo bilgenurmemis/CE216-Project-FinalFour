@@ -19,6 +19,7 @@ class LeagueTest {
         // Prepare the test environment
         mockSport = new ISport() {
             public int getRequiredPlayers() { return 11; }
+            public int getSquadSize() { return 18; }
             public int getMatchDuration() { return 90; }
             public int getPointForWin() { return 3; }
             public int getPointForDraw() { return 1; }
