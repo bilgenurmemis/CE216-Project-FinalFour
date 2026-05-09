@@ -246,19 +246,22 @@ public class SportsManagerGUI extends Application {
         btnViewStandings.setDisable(true);
 
         btnSimulate.setOnAction(e -> {
-            int[] scores = matchEngine.simulateMatch(myTeamObj, opponentTeamObj, league.getSport());
+            int[] userMatchScores = matchEngine.simulateMatch(myTeamObj, opponentTeamObj, league.getSport());
+            lblScore.setText(userMatchScores[0] + " - " + userMatchScores[1]);
 
-            lblScore.setText(scores[0] + " - " + scores[1]);
-
-            myTeamObj.updateStatus(scores[0], scores[1]);
-            opponentTeamObj.updateStatus(scores[1], scores[0]);
-
+            List<BaseTeam> teams = league.getTeams();
             int winPoint = league.getSport().getPointForWin();
             int drawPoint = league.getSport().getPointForDraw();
-            if (scores[0] > scores[1]) myTeamObj.addPoints(winPoint);
-            else if (scores[1] > scores[0]) opponentTeamObj.addPoints(winPoint);
-            else { myTeamObj.addPoints(drawPoint); opponentTeamObj.addPoints(drawPoint); }
 
+            for(int i = 0; i < teams.size(); i++){
+                for(int j = i + 1; j < teams.size(); j++){
+                    BaseTeam home = teams.get(i);
+                    BaseTeam away = teams.get(j);
+
+                    playAndRecord(home, away, winPoint, drawPoint);
+                    playAndRecord(away, home, winPoint,drawPoint);
+                }
+            }
             btnSimulate.setDisable(true);
             btnViewStandings.setDisable(false);
         });
@@ -272,6 +275,7 @@ public class SportsManagerGUI extends Application {
 
         Scene matchScene = new Scene(matchLayout, 650, 500);
         window.setScene(matchScene);
+
     }
 
     private void showStandingsScreen() {
@@ -308,8 +312,11 @@ public class SportsManagerGUI extends Application {
         btnReset.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold;");
         btnReset.setMinWidth(120);
         btnReset.setOnAction(e -> {
-            tableLogic.clearStatus();
-            standingsTable.setItems(FXCollections.observableArrayList(tableLogic.getTable()));
+            for(BaseTeam team : league.getTeams()){
+                team.resetStatus();
+            }
+            LeagueTable newTable = new LeagueTable(league.getTeams());
+            standingsTable.setItems(FXCollections.observableArrayList(newTable.getTable()));
         });
 
         standingsTable.setMaxHeight(300);
@@ -330,6 +337,20 @@ public class SportsManagerGUI extends Application {
 
         Scene standingsScene = new Scene(layout, 550, 550);
         window.setScene(standingsScene);
+    }
+    private void playAndRecord(BaseTeam t1, BaseTeam t2, int winPoint, int drawPoint){
+        int[] scores = matchEngine.simulateMatch(t1, t2, league.getSport());
+        t1.updateStatus(scores[0], scores[1]);
+        t2.updateStatus(scores[1], scores[0]);
+
+        if(scores[0] > scores[1]){
+            t1.addPoints(winPoint);
+        }else if(scores[1] > scores[0]){
+            t2.addPoints(winPoint);
+        }else{
+            t1.addPoints(drawPoint);
+            t2.addPoints(drawPoint);
+        }
     }
 
     public static void main(String[] args) {
