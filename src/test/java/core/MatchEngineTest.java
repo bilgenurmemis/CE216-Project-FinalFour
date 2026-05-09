@@ -19,6 +19,8 @@ class MatchEngineTest {
             public int getRequiredPlayers() {
                 return 2;
             }
+            @Override
+            public int getSquadSize() { return 5; }
 
             @Override
             public int getMatchDuration() {
