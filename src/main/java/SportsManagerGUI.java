@@ -90,9 +90,13 @@ public class SportsManagerGUI extends Application {
         Label label = new Label("League Setup");
         label.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
-        Label nameLabel = new Label("Enter Your Team Name:");
-        TextField teamNameField = new TextField();
-        teamNameField.setMaxWidth(200);
+        Label nameLabel = new Label("Select Your Team:");
+        ComboBox<String> myTeamList = new ComboBox<>();
+        for (BaseTeam t : league.getTeams()) {
+            myTeamList.getItems().add(t.getTeamName());
+        }
+        myTeamList.setPromptText("Select Your Team");
+        myTeamList.setMinWidth(200);
 
         Label selectLabel = new Label("Select Opponent Team:");
         ComboBox<String> teamList = new ComboBox<>();
@@ -112,21 +116,16 @@ public class SportsManagerGUI extends Application {
         btnBack.setMinWidth(200);
 
         btnStart.setOnAction(e -> {
-            String myTeamName = teamNameField.getText();
+            String myTeamName = myTeamList.getValue();
             String opponentName = teamList.getValue();
 
-            if(myTeamName.isEmpty() || opponentName == null) {
-                System.out.println("Please enter team name and select an opponent!");
+            if (myTeamName == null || opponentName == null || myTeamName.equals(opponentName)) {
+                System.out.println("Please select different teams!");
             } else {
-                myTeamObj = new BaseTeam(myTeamName);
-
-                int required = league.getSport().getRequiredPlayers();
-                for (int i = 0; i < required; i++) {
-                    BasketballPlayer dummyPlayer = new BasketballPlayer("Player " + i, 22, 85.0);
-                    myTeamObj.addPlayer(dummyPlayer, 20);
-                }
-
-                league.addTeam(myTeamObj);
+                myTeamObj = league.getTeams().stream()
+                        .filter(t -> t.getTeamName().equals(myTeamName))
+                        .findFirst()
+                        .orElse(null);
 
                 opponentTeamObj = league.getTeams().stream()
                         .filter(t -> t.getTeamName().equals(opponentName))
@@ -139,7 +138,7 @@ public class SportsManagerGUI extends Application {
 
         VBox newGameLayout = new VBox(15);
         newGameLayout.setAlignment(Pos.CENTER);
-        newGameLayout.getChildren().addAll(label, nameLabel, teamNameField, selectLabel, teamList, btnStart, btnBack);
+        newGameLayout.getChildren().addAll(label, nameLabel, myTeamList, selectLabel, teamList, btnStart, btnBack);
 
         Scene newGameScene = new Scene(newGameLayout, 500, 500);
         window.setScene(newGameScene);
