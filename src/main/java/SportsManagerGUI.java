@@ -1,5 +1,4 @@
 import Services.DataManager;
-import Services.SaveManager;
 import core.BasketballSport;
 import core.MatchEngine;
 import models.*;
@@ -10,8 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -31,10 +28,6 @@ public class SportsManagerGUI extends Application {
     private BaseTeam myTeamObj;
     private BaseTeam opponentTeamObj;
 
-    private final String bgColor = "-fx-background-color: #f4f6f9;";
-    private final String mainBtnColor = "-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;";
-    private final String titleColor = "-fx-text-fill: #2c3e50;";
-
     @Override
     public void start(Stage primaryStage) {
         window = primaryStage;
@@ -51,54 +44,39 @@ public class SportsManagerGUI extends Application {
         }
 
         Label titleLabel = new Label("Sports Manager: Final Four");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 26));
-        titleLabel.setStyle(titleColor);
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         Button btnNewGame = new Button("New Game (Basketball)");
         Button btnLoadGame = new Button("Load Game");
         Button btnSaveGame = new Button("Save Game");
         Button btnExit = new Button("Exit");
 
-        btnNewGame.setStyle(mainBtnColor);
-        btnLoadGame.setStyle(mainBtnColor);
-        btnSaveGame.setStyle(mainBtnColor);
-        btnExit.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
-
         btnSaveGame.setOnAction(e -> {
-            SaveManager.saveGame(league, "savegame.dat");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Game saved successfully!");
-            alert.showAndWait();
+            Services.SaveManager.saveGame(league, "savegame.dat");
+            System.out.println("GUI: Game Saved!");
         });
 
         btnLoadGame.setOnAction(e -> {
-            League loadedLeague = SaveManager.loadGame("savegame.dat");
+            models.League loadedLeague = Services.SaveManager.loadGame("savegame.dat");
             if (loadedLeague != null) {
                 this.league = loadedLeague;
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Success");
-                alert.setHeaderText(null);
-                alert.setContentText("Game loaded successfully!");
-                alert.showAndWait();
+                System.out.println("GUI: Game Loaded Successfully!");
             }
         });
 
-        btnNewGame.setMinWidth(220);
-        btnLoadGame.setMinWidth(220);
-        btnSaveGame.setMinWidth(220);
-        btnExit.setMinWidth(220);
+        btnNewGame.setMinWidth(200);
+        btnLoadGame.setMinWidth(200);
+        btnSaveGame.setMinWidth(200);
+        btnExit.setMinWidth(200);
 
         btnNewGame.setOnAction(e -> showNewGameScreen());
         btnExit.setOnAction(e -> window.close());
 
-        VBox layout = new VBox(20);
+        VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle(bgColor);
         layout.getChildren().addAll(titleLabel, btnNewGame, btnLoadGame, btnSaveGame, btnExit);
 
-        mainMenuScene = new Scene(layout, 550, 500);
+        mainMenuScene = new Scene(layout, 500, 500);
 
         window.setTitle("Sports Manager");
         window.setScene(mainMenuScene);
@@ -107,48 +85,37 @@ public class SportsManagerGUI extends Application {
 
     private void showNewGameScreen() {
         Label label = new Label("League Setup");
-        label.setFont(Font.font("Arial", FontWeight.BOLD, 22));
-        label.setStyle(titleColor);
+        label.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
         Label nameLabel = new Label("Enter Your Team Name:");
-        nameLabel.setFont(Font.font("Arial", 14));
-
         TextField teamNameField = new TextField();
-        teamNameField.setMaxWidth(220);
-        teamNameField.setStyle("-fx-font-size: 14px;");
+        teamNameField.setMaxWidth(200);
 
         Label selectLabel = new Label("Select Opponent Team:");
-        selectLabel.setFont(Font.font("Arial", 14));
-
         ComboBox<String> teamList = new ComboBox<>();
+
         for (BaseTeam t : league.getTeams()) {
             teamList.getItems().add(t.getTeamName());
         }
         teamList.setPromptText("Select a Team");
-        teamList.setMinWidth(220);
-        teamList.setStyle("-fx-font-size: 14px;");
+        teamList.setMinWidth(200);
 
         Button btnStart = new Button("Start Season");
-        btnStart.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
-        btnStart.setMinWidth(220);
+        btnStart.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnStart.setMinWidth(200);
 
         Button btnBack = new Button("Back");
-        btnBack.setStyle(mainBtnColor);
         btnBack.setOnAction(e -> window.setScene(mainMenuScene));
-        btnBack.setMinWidth(220);
+        btnBack.setMinWidth(200);
 
         btnStart.setOnAction(e -> {
             String myTeamName = teamNameField.getText();
             String opponentName = teamList.getValue();
 
-            if (myTeamName == null || myTeamName.trim().isEmpty() || opponentName == null) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Missing Information");
-                alert.setHeaderText(null);
-                alert.setContentText("Please enter a team name and select an opponent!");
-                alert.showAndWait();
+            if(myTeamName.isEmpty() || opponentName == null) {
+                System.out.println("Please enter team name and select an opponent!");
             } else {
-                myTeamObj = new BaseTeam(myTeamName.trim());
+                myTeamObj = new BaseTeam(myTeamName);
 
                 int required = league.getSport().getRequiredPlayers();
                 for (int i = 0; i < required; i++) {
@@ -169,63 +136,33 @@ public class SportsManagerGUI extends Application {
 
         VBox newGameLayout = new VBox(15);
         newGameLayout.setAlignment(Pos.CENTER);
-        newGameLayout.setStyle(bgColor);
         newGameLayout.getChildren().addAll(label, nameLabel, teamNameField, selectLabel, teamList, btnStart, btnBack);
 
-        Scene newGameScene = new Scene(newGameLayout, 550, 500);
+        Scene newGameScene = new Scene(newGameLayout, 500, 500);
         window.setScene(newGameScene);
     }
 
     private void showMatchScreen() {
         Label matchTitle = new Label("Match Day");
-        matchTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        matchTitle.setStyle(titleColor);
-
-        ImageView homeLogoView = new ImageView();
-        homeLogoView.setFitWidth(60);
-        homeLogoView.setFitHeight(60);
-        homeLogoView.setPreserveRatio(true);
-        try {
-            String homePath = "/logos/" + myTeamObj.getTeamName() + ".jpg";
-            java.net.URL homeRes = getClass().getResource(homePath);
-            if (homeRes != null) {
-                homeLogoView.setImage(new Image(homeRes.toExternalForm()));
-            }
-        } catch (Exception ignored) {}
-
-        ImageView awayLogoView = new ImageView();
-        awayLogoView.setFitWidth(60);
-        awayLogoView.setFitHeight(60);
-        awayLogoView.setPreserveRatio(true);
-        try {
-            String awayPath = "/logos/" + opponentTeamObj.getTeamName() + ".jpg";
-            java.net.URL awayRes = getClass().getResource(awayPath);
-            if (awayRes != null) {
-                awayLogoView.setImage(new Image(awayRes.toExternalForm()));
-            }
-        } catch (Exception ignored) {}
+        matchTitle.setFont(Font.font("Arial", FontWeight.BOLD, 22));
 
         Label lblHome = new Label(myTeamObj.getTeamName());
-        lblHome.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-
+        lblHome.setFont(Font.font("Arial", 18));
         Label lblScore = new Label("0 - 0");
-        lblScore.setFont(Font.font("Arial", FontWeight.BOLD, 32));
-        lblScore.setStyle("-fx-text-fill: #e74c3c;");
-
+        lblScore.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         Label lblAway = new Label(opponentTeamObj.getTeamName());
-        lblAway.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        lblAway.setFont(Font.font("Arial", 18));
 
-        HBox scoreBoard = new HBox(25);
+        HBox scoreBoard = new HBox(30);
         scoreBoard.setAlignment(Pos.CENTER);
-        scoreBoard.getChildren().addAll(homeLogoView, lblHome, lblScore, lblAway, awayLogoView);
+        scoreBoard.getChildren().addAll(lblHome, lblScore, lblAway);
 
         Button btnSimulate = new Button("Play Full Match");
-        btnSimulate.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;");
-        btnSimulate.setMinWidth(220);
+        btnSimulate.setMinWidth(200);
 
         Button btnViewStandings = new Button("View Standings");
-        btnViewStandings.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;");
-        btnViewStandings.setMinWidth(220);
+        btnViewStandings.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        btnViewStandings.setMinWidth(200);
         btnViewStandings.setDisable(true);
 
         btnSimulate.setOnAction(e -> {
@@ -248,19 +185,17 @@ public class SportsManagerGUI extends Application {
 
         btnViewStandings.setOnAction(e -> showStandingsScreen());
 
-        VBox matchLayout = new VBox(30);
+        VBox matchLayout = new VBox(20);
         matchLayout.setAlignment(Pos.CENTER);
-        matchLayout.setStyle(bgColor);
         matchLayout.getChildren().addAll(matchTitle, scoreBoard, btnSimulate, btnViewStandings);
 
-        Scene matchScene = new Scene(matchLayout, 550, 500);
+        Scene matchScene = new Scene(matchLayout, 500, 500);
         window.setScene(matchScene);
     }
 
     private void showStandingsScreen() {
         Label titleLabel = new Label("League Standings");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setStyle(titleColor);
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
 
         LeagueTable tableLogic = new LeagueTable(league.getTeams());
         List<BaseTeam> sortedTeams = tableLogic.getTable();
@@ -268,51 +203,45 @@ public class SportsManagerGUI extends Application {
         TableView<BaseTeam> standingsTable = new TableView<>();
 
         TableColumn<BaseTeam, String> teamCol = new TableColumn<>("Team Name");
-        teamCol.setMinWidth(220);
-        teamCol.setStyle("-fx-font-weight: bold;");
+        teamCol.setMinWidth(200);
         teamCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTeamName()));
 
         TableColumn<BaseTeam, String> pointsCol = new TableColumn<>("Points");
-        pointsCol.setMinWidth(90);
-        pointsCol.setStyle("-fx-alignment: CENTER; -fx-font-size: 14px;");
+        pointsCol.setMinWidth(100);
         pointsCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getPoints())));
 
         TableColumn<BaseTeam, String> averageCol = new TableColumn<>("Average");
-        averageCol.setMinWidth(90);
-        averageCol.setStyle("-fx-alignment: CENTER; -fx-font-size: 14px;");
+        averageCol.setMinWidth(100);
         averageCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getAverage())));
 
         standingsTable.getColumns().addAll(teamCol, pointsCol, averageCol);
 
-        ObservableList<BaseTeam> data = FXCollections.observableArrayList(sortedTeams);
+
+        ObservableList<BaseTeam> data = FXCollections.observableArrayList(league.getStandings());
         standingsTable.setItems(data);
 
         Button btnReset = new Button("Reset Standings");
-        btnReset.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold;");
-        btnReset.setMinWidth(120);
+        btnReset.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnReset.setMinWidth(80);
         btnReset.setOnAction(e -> {
             tableLogic.clearStatus();
             standingsTable.setItems(FXCollections.observableArrayList(tableLogic.getTable()));
-        });
+                });
 
-        standingsTable.setMaxHeight(300);
-        standingsTable.setMaxWidth(420);
+        standingsTable.setMaxHeight(250);
+        standingsTable.setMaxWidth(350);
 
         Button btnMainMenu = new Button("Back to Main Menu");
-        btnMainMenu.setStyle(mainBtnColor);
         btnMainMenu.setOnAction(e -> window.setScene(mainMenuScene));
-
-        HBox buttonBox = new HBox(20);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.getChildren().addAll(btnMainMenu, btnReset);
 
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle(bgColor);
-        layout.getChildren().addAll(titleLabel, standingsTable, buttonBox);
+        layout.getChildren().addAll(titleLabel, standingsTable, btnMainMenu, btnReset);
 
-        Scene standingsScene = new Scene(layout, 550, 550);
+        Scene standingsScene = new Scene(layout, 500, 500);
         window.setScene(standingsScene);
+
+
     }
 
     public static void main(String[] args) {
