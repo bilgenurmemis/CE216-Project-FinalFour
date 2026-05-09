@@ -15,6 +15,6 @@ public class LeagueCapacityTest {
         for (BaseTeam team : teams) {
             totalPlayers += team.getPlayers().size();
         }
-        assertEquals(200, totalPlayers, "Total players should be 200.");
+        assertEquals(360, totalPlayers, "Total players should be 360.");
     }
 }

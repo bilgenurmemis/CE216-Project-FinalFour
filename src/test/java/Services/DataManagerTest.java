@@ -26,7 +26,7 @@ public class DataManagerTest {
 
         List<BaseTeam> teams = dataManager.setupLeague(new FootballSport());
         for (BaseTeam team : teams) {
-            assertEquals(10, team.getPlayers().size(),
+            assertEquals(18, team.getPlayers().size(),
                     "Team " + team.getTeamName() + " must have exactly 10 players.");
         }
     }

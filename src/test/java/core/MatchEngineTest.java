@@ -21,6 +21,8 @@ class MatchEngineTest {
             }
             @Override
             public int getSquadSize() { return 5; }
+            @Override
+            public int getNumberOfPeriods() { return 4; }
 
             @Override
             public int getMatchDuration() {

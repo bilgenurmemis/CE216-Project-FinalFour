@@ -22,9 +22,8 @@ public class MatchEngine {
     public int[] simulateMatch(BaseTeam team1, BaseTeam team2, ISport rules) {
         if (team1.getPlayers().size() < rules.getRequiredPlayers() ||
                 team2.getPlayers().size() < rules.getRequiredPlayers()) {
-            // Yaralıları iyileştir ve devam et
-            team1.getPlayers().forEach(p -> { if (p.isInjured()) p.decreaseInjury(); });
-            team2.getPlayers().forEach(p -> { if (p.isInjured()) p.decreaseInjury(); });
+
+            throw new IllegalArgumentException("Not enough players to start the match.");
         }
 
         quarterScores = new ArrayList<>();

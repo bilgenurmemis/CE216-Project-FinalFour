@@ -23,6 +23,8 @@ class LeagueTest {
             public int getMatchDuration() { return 90; }
             public int getPointForWin() { return 3; }
             public int getPointForDraw() { return 1; }
+            public int getNumberOfPeriods() { return 4; }
+
         };
         league = new League(mockSport);
         
