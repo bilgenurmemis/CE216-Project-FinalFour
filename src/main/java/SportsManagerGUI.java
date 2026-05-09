@@ -1,6 +1,7 @@
 import Services.DataManager;
 import Services.SaveManager;
 import core.BasketballSport;
+import core.FootballSport;
 import core.MatchEngine;
 import models.*;
 import javafx.application.Application;
@@ -42,35 +43,46 @@ public class SportsManagerGUI extends Application {
         dataManager = new DataManager();
         matchEngine = new MatchEngine();
 
-        BasketballSport basketballRules = new BasketballSport();
-        league = new League(basketballRules);
-
-        List<BaseTeam> loadedTeams = dataManager.setupLeague(basketballRules);
-        for (BaseTeam t : loadedTeams) {
-            league.addTeam(t);
-        }
-
         Label titleLabel = new Label("Sports Manager: Final Four");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 26));
         titleLabel.setStyle(titleColor);
 
-        Button btnNewGame = new Button("New Game (Basketball)");
+        Button btnNewBasketball = new Button("New Game (Basketball)");
+        Button btnNewFootball = new Button("New Game (Football)");
         Button btnLoadGame = new Button("Load Game");
         Button btnSaveGame = new Button("Save Game");
         Button btnExit = new Button("Exit");
 
-        btnNewGame.setStyle(mainBtnColor);
+        btnNewBasketball.setStyle("-fx-background-color: #e67e22; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        btnNewFootball.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
         btnLoadGame.setStyle(mainBtnColor);
         btnSaveGame.setStyle(mainBtnColor);
         btnExit.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
 
+        btnNewBasketball.setMinWidth(220);
+        btnNewFootball.setMinWidth(220);
+        btnLoadGame.setMinWidth(220);
+        btnSaveGame.setMinWidth(220);
+        btnExit.setMinWidth(220);
+
+        btnNewBasketball.setOnAction(e -> initNewGame(new BasketballSport()));
+        btnNewFootball.setOnAction(e -> initNewGame(new FootballSport()));
+
         btnSaveGame.setOnAction(e -> {
-            SaveManager.saveGame(league, "savegame.dat");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Game saved successfully!");
-            alert.showAndWait();
+            if (league == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("No active game to save! Please start a new game or load first.");
+                alert.showAndWait();
+            } else {
+                SaveManager.saveGame(league, "savegame.dat");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("Game saved successfully!");
+                alert.showAndWait();
+            }
         });
 
         btnLoadGame.setOnAction(e -> {
@@ -85,24 +97,28 @@ public class SportsManagerGUI extends Application {
             }
         });
 
-        btnNewGame.setMinWidth(220);
-        btnLoadGame.setMinWidth(220);
-        btnSaveGame.setMinWidth(220);
-        btnExit.setMinWidth(220);
-
-        btnNewGame.setOnAction(e -> showNewGameScreen());
         btnExit.setOnAction(e -> window.close());
 
-        VBox layout = new VBox(20);
+        VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
         layout.setStyle(bgColor);
-        layout.getChildren().addAll(titleLabel, btnNewGame, btnLoadGame, btnSaveGame, btnExit);
+        layout.getChildren().addAll(titleLabel, btnNewBasketball, btnNewFootball, btnLoadGame, btnSaveGame, btnExit);
 
         mainMenuScene = new Scene(layout, 550, 500);
 
         window.setTitle("Sports Manager");
         window.setScene(mainMenuScene);
         window.show();
+    }
+
+
+    private void initNewGame(core.ISport selectedSport) {
+        league = new League(selectedSport);
+        List<BaseTeam> loadedTeams = dataManager.setupLeague(selectedSport);
+        for (BaseTeam t : loadedTeams) {
+            league.addTeam(t);
+        }
+        showNewGameScreen();
     }
 
     private void showNewGameScreen() {
@@ -158,7 +174,6 @@ public class SportsManagerGUI extends Application {
                 alert.setContentText("A team cannot play against itself! Select different teams.");
                 alert.showAndWait();
             } else {
-
                 myTeamObj = league.getTeams().stream()
                         .filter(t -> t.getTeamName().equals(myTeamName))
                         .findFirst()
@@ -217,7 +232,7 @@ public class SportsManagerGUI extends Application {
         Label lblAway = new Label(opponentTeamObj.getTeamName());
         lblAway.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
-        HBox scoreBoard = new HBox(25);
+        HBox scoreBoard = new HBox(15);
         scoreBoard.setAlignment(Pos.CENTER);
         scoreBoard.getChildren().addAll(homeLogoView, lblHome, lblScore, lblAway, awayLogoView);
 
@@ -255,7 +270,7 @@ public class SportsManagerGUI extends Application {
         matchLayout.setStyle(bgColor);
         matchLayout.getChildren().addAll(matchTitle, scoreBoard, btnSimulate, btnViewStandings);
 
-        Scene matchScene = new Scene(matchLayout, 550, 500);
+        Scene matchScene = new Scene(matchLayout, 650, 500);
         window.setScene(matchScene);
     }
 
